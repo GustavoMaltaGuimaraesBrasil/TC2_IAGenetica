@@ -7,8 +7,8 @@ pygame.init()
 pygame.mixer.init()
 
 # Sons
-som_tiro = pygame.mixer.Sound('media\\lazer.wav')
-som_atingido = pygame.mixer.Sound('media\\explosao.flac')
+som_tiro = pygame.mixer.Sound('Fontes\\media\\lazer.wav')
+som_atingido = pygame.mixer.Sound('Fontes\\media\\explosao.flac')
 
 # Tela
 LARGURA = 1200
@@ -25,7 +25,7 @@ VERMELHO = (255, 0, 0)
 fonte = pygame.font.SysFont('arial', 30)
 
 # Jogador
-nave_img_original = pygame.image.load('media\\tank.png').convert_alpha()
+nave_img_original = pygame.image.load('Fontes\\media\\tank.png').convert_alpha()
 nave_img = pygame.transform.scale(nave_img_original, (80, 60))
 nave_largura = nave_img.get_width()
 nave_altura = nave_img.get_height()
@@ -45,7 +45,7 @@ pode_atirar = True
 # Inimigos
 inimigo_largura = 60
 inimigo_altura = 40
-inimigo_img_original = pygame.image.load('media\\inimigo.png').convert_alpha()
+inimigo_img_original = pygame.image.load('Fontes\\media\\inimigo.png').convert_alpha()
 inimigo_img = pygame.transform.scale(inimigo_img_original, (inimigo_largura, inimigo_altura))
 
 # IA Genética - parâmetros fixos

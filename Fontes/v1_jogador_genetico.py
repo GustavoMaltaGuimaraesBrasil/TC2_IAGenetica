@@ -53,11 +53,11 @@ def carrega_imagem(nome, size):
     return pygame.transform.scale(pygame.image.load(nome), size)
 
 def salvar_melhor_individuo(ind):
-    with open("melhor_individuo.json", "w") as f:
+    with open("Fontes/melhor_individuo.json", "w") as f:
         json.dump({"genes": ind.genes, "fitness": ind.fitness}, f)
 
 def carregar_melhor_individuo():
-    with open("melhor_individuo.json", "r") as f:
+    with open("Fontes/melhor_individuo.json", "r") as f:
         data = json.load(f)
     return Individuo(data["genes"])
 
@@ -272,15 +272,15 @@ def main():
     global nave_img, inimigo_img
     pygame.init()
     pygame.font.init()   
-    nave_img = carrega_imagem("media/tank.png", (80, 60))
-    inimigo_img = carrega_imagem("media/inimigo.png", (60, 40))
+    nave_img = carrega_imagem("Fontes/media/tank.png", (80, 60))
+    inimigo_img = carrega_imagem("Fontes/media/inimigo.png", (60, 40))
 
     populacao = [Individuo() for _ in range(NUM_INDIVIDUOS)]
     melhores = []
     log_fits = []
     medias = []
 
-    with open("log_genetico.csv", "w", newline="") as f:
+    with open("Fontes/Log_genetico.csv", "w", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(["geracao", "melhor_genes", "fit", "media_fit"])
 
@@ -298,7 +298,7 @@ def main():
             print(f"Geração {geracao}, melhor indivíduo- Fit: {populacao[0].fitness:.3f}")
             avaliar_individuo(populacao[0], geracao=geracao, mostrar_tela=True)
 
-        with open("log_genetico.csv", "a", newline="") as f:
+        with open("Fontes/log_genetico.csv", "a", newline="") as f:
             writer = csv.writer(f)
             writer.writerow([geracao, populacao[0].genes, round(populacao[0].fitness, 3), round(media_fit, 3)])
 
