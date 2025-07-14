@@ -19,26 +19,23 @@ import json
 import matplotlib.pyplot as plt
 from pygame.locals import *
 
-
 pygame.init()
 pygame.font.init()
 
-
-INIMIGO_PARADO = False 
+INIMIGO_PARADO = True 
+INIMIGO_INICIADO_ALEATORIO = True  # Inimigos iniciam em posições aleatórias
 
 # =============== PARÂMETROS DO ALGORITMO GENÉTICO ===============
-NUM_INDIVIDUOS = 10           # Indivíduos por geração
+NUM_INDIVIDUOS = 100           # Indivíduos por geração
 NUM_GERACOES = 100            # Gerações
-NUM_JOGADAS = 600             # Jogadas por indivíduo
-ELITISMO = True                # Manter melhor indivíduo na próxima geração
-N_MELHOR = 1                   # Quantos melhores mantém (elitismo)
-PONTO_CORTE = 200               # Genes do pai1 no crossover (restante do pai2)
+NUM_JOGADAS = 700             # Jogadas por indivíduo
+ELITISMO = True               # Manter melhor indivíduo na próxima geração
+N_MELHOR = 1                 # Quantos melhores mantém (elitismo)
+PONTO_CORTE = 300             # Genes do pai1 no crossover (restante do pai2)
 PROB_MUTACAO = 0.6            # Prob. de mutação por indivíduo
-N_GENES_MUTACAO = (10,50)       # Quantidade de genes mutados (min, max)
-GERACOES_VISUALIZACAO = 20     # A cada quantas gerações exibir visualmente o melhor
-#MODO_JOGADOR = "genetico"      # Modo do jogador (agora genético)
-#COMPORTAMENTO_INIMIGOS = "linear" # Inimigos sempre lineares
-QUANTIDADE_INIMIGOS = 7        # Quantidade de inimigos por rodada
+N_GENES_MUTACAO = (100,300)     # Quantidade de genes mutados (min, max)
+GERACOES_VISUALIZACAO = 5    # A cada quantas gerações exibir visualmente o melhor
+QUANTIDADE_INIMIGOS = 7       # Quantidade de inimigos por rodada
 
 # Pesos do fitness
 PESO_INIMIGOS_ABATIDOS = 0.4
@@ -46,23 +43,22 @@ PESO_ORDEM_ACERTOS = 0.3
 BONUS_FINAL = 0.5             # Bônus para abate total rápido
 
 # =============== PARÂMETROS DO JOGO ===============
-LARGURA, ALTURA = 1200, 800
+LARGURA, ALTURA = 1100, 700
 FPS = 2000
 MOSTRAR_TELA = False  # Apenas nas gerações de visualização
 
 PRETO = (0, 0, 0)
 BRANCO = (255, 255, 255)
 
-# =============== FUNÇÕES DE UTILITÁRIO ===============
 def carrega_imagem(nome, size):
     return pygame.transform.scale(pygame.image.load(nome), size)
 
 def salvar_melhor_individuo(ind):
-    with open("melhor_individuo.json", "w") as f:
+    with open("Fontes/melhor_individuo.json", "w") as f:
         json.dump({"genes": ind.genes, "fitness": ind.fitness}, f)
 
 def carregar_melhor_individuo():
-    with open("melhor_individuo.json", "r") as f:
+    with open("Fontes/melhor_individuo.json", "r") as f:
         data = json.load(f)
     return Individuo(data["genes"])
 
@@ -78,7 +74,6 @@ def exibe_grafico(log_fits, medias):
     plt.tight_layout()
     plt.show()
 
-# =============== CLASSE INDIVÍDUO ===============
 class Individuo:
     def __init__(self, genes=None):
         if genes is None:
@@ -91,7 +86,6 @@ class Individuo:
     def __repr__(self):
         return str(self.genes)
 
-# =============== FUNÇÕES GENÉTICAS ===============
 def crossover(pai1, pai2):
     corte = PONTO_CORTE
     filho1 = Individuo(pai1.genes[:corte] + pai2.genes[corte:])
@@ -108,7 +102,6 @@ def mutacao(individuo):
 def selecao(populacao):
     return max(random.sample(populacao, 2), key=lambda ind: ind.fitness)
 
-# =============== FUNÇÃO DE FITNESS APRIMORADA ===============
 def calcular_fitness(acertos, jogada_acertos, jogadas_usadas):
     fit1 = (acertos / QUANTIDADE_INIMIGOS) * PESO_INIMIGOS_ABATIDOS
     if sum(jogada_acertos) == 0:
@@ -122,7 +115,6 @@ def calcular_fitness(acertos, jogada_acertos, jogadas_usadas):
         bonus = BONUS_FINAL * (NUM_JOGADAS - jogadas_usadas) / NUM_JOGADAS
     return fit1 + fit2 + bonus
 
-# =============== CLASSES DO JOGO ===============
 class Entidade:
     def __init__(self, x, y, imagem):
         self.x = x
@@ -183,14 +175,12 @@ class Inimigo(Entidade):
         self.direcao = 1
 
     def mover(self, outros_inimigos, tiros):
-        
         nova_x = self.x + 5 * self.direcao
         nova_y = self.y + 0.7
         if INIMIGO_PARADO:
             nova_x = self.x
             nova_y = self.y
-        
-        
+
         colisao = False
         for outro in outros_inimigos:
             if outro is not self:
@@ -203,8 +193,7 @@ class Inimigo(Entidade):
             self.x = nova_x
             self.y = nova_y
 
-# =============== AVALIAÇÃO DO INDIVÍDUO ===============
-def avaliar_individuo(individuo, mostrar_tela=False):
+def avaliar_individuo(individuo, geracao=None, mostrar_tela=False):
     tela = None
     if mostrar_tela:
         tela = pygame.display.set_mode((LARGURA, ALTURA))
@@ -212,11 +201,19 @@ def avaliar_individuo(individuo, mostrar_tela=False):
     clock = pygame.time.Clock()
 
     jogador = JogadorGenetico(individuo.genes)
+    #iniciar Inimigos
+
     inimigos = []
-    for i in range(QUANTIDADE_INIMIGOS):
-        x = 100 + i * 150
-        y = 100
-        inimigos.append(Inimigo(x, y))
+    if INIMIGO_INICIADO_ALEATORIO:
+        for i in range(QUANTIDADE_INIMIGOS):
+            x = random.randint(100, LARGURA - 160)
+            y = random.randint(100, ALTURA // 2)
+            inimigos.append(Inimigo(x, y))
+    else:
+        for i in range(QUANTIDADE_INIMIGOS):
+            x = 100 + i * 150
+            y = 100
+            inimigos.append(Inimigo(x, y))
 
     jogada_acertos = [0] * NUM_JOGADAS
     tiros_para_remover = []
@@ -263,8 +260,9 @@ def avaliar_individuo(individuo, mostrar_tela=False):
             for inimigo in inimigos:
                 inimigo.desenhar(tela)
             fonte = pygame.font.SysFont(None, 30)
-           
-            texto = fonte.render(f"Inimigos restantes: {len(inimigos)} Jogada: {jogada+1}  ", True, BRANCO)
+            texto = fonte.render(
+                f"Geração: {geracao}      Inimigos Derrotados: {abates}       Inimigos restantes: {len(inimigos)}       Jogada: {jogada+1} de {NUM_JOGADAS}  ",
+                True, BRANCO)
             tela.blit(texto, (20, 10))
             pygame.display.flip()
             clock.tick(60)
@@ -275,31 +273,75 @@ def avaliar_individuo(individuo, mostrar_tela=False):
 
     if mostrar_tela:
         pygame.time.wait(1000)
-        #pygame.quit()
 
     individuo.fitness = calcular_fitness(abates, jogada_acertos, jogadas_usadas)
     return individuo.fitness
 
-# =============== LOOP GENÉTICO PRINCIPAL ===============
+def gerar_populacao_inicial():
+    populacao = []
+    individuos_por_tipo = 20
+    tamanhos_blocos = [40,100,150]  # blocos que você quer
+
+    for tamanho_bloco in tamanhos_blocos:
+        tamanho_padrao = tamanho_bloco + 1  # movimentos repetidos + 1 gene aleatório
+        for _ in range(individuos_por_tipo):
+            genes = []
+            # Quantas vezes o padrão cabe em NUM_JOGADAS?
+            repeticoes = NUM_JOGADAS // tamanho_padrao
+            sobra = NUM_JOGADAS % tamanho_padrao
+
+            for _ in range(repeticoes):
+                lado = random.choice([1, 2])  # movimento repetido
+                genes += [lado] * tamanho_bloco
+                acao = random.choice([0, 3])  # gene aleatório
+                genes.append(acao)
+
+            # Preencher o resto cortando parte do padrão para não passar do tamanho
+            if sobra > 0:
+                lado = random.choice([1, 2])
+                if sobra <= tamanho_bloco:
+                    genes += [lado] * sobra
+                else:
+                    genes += [lado] * tamanho_bloco
+                    acao = random.choice([0, 3])
+                    genes.append(acao)
+                    genes = genes[:NUM_JOGADAS]  # garante tamanho exato
+
+            # Garantir tamanho exato (por segurança)
+            genes = genes[:NUM_JOGADAS]
+
+            populacao.append(Individuo(genes))
+
+    # Completar população com aleatórios, se necessário
+    while len(populacao) < NUM_INDIVIDUOS:
+        populacao.append(Individuo())
+
+    return populacao
+
+
+
+
+
 def main():
     global nave_img, inimigo_img
     pygame.init()
     pygame.font.init()   
-    nave_img = carrega_imagem("media/tank.png", (80, 60))
-    inimigo_img = carrega_imagem("media/inimigo.png", (60, 40))
+    nave_img = carrega_imagem("Fontes/media/tank.png", (80, 60))
+    inimigo_img = carrega_imagem("Fontes/media/inimigo.png", (60, 40))
 
-    populacao = [Individuo() for _ in range(NUM_INDIVIDUOS)]
+    populacao = gerar_populacao_inicial()
+
     melhores = []
     log_fits = []
     medias = []
 
-    with open("log_genetico.csv", "w", newline="") as f:
+    with open("Fontes/Log_genetico.csv", "w", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(["geracao", "melhor_genes", "fit", "media_fit"])
 
     for geracao in range(1, NUM_GERACOES + 1):
         for ind in populacao:
-            avaliar_individuo(ind, mostrar_tela=False)
+            avaliar_individuo(ind, geracao=geracao, mostrar_tela=False)
         populacao.sort(key=lambda ind: ind.fitness, reverse=True)
         melhores.append(populacao[0])
         log_fits.append(populacao[0].fitness)
@@ -307,10 +349,10 @@ def main():
         medias.append(media_fit)
 
         if geracao % GERACOES_VISUALIZACAO == 0:
-            print(f"Geração {geracao}, melhor indivíduo: {populacao[0].genes}, Fit: {populacao[0].fitness:.3f}")
-            avaliar_individuo(populacao[0], mostrar_tela=True)
+            print(f"Geração {geracao}, melhor indivíduo- Fit: {populacao[0].fitness:.3f}")
+            avaliar_individuo(populacao[0], geracao=geracao, mostrar_tela=True)
 
-        with open("log_genetico.csv", "a", newline="") as f:
+        with open("Fontes/log_genetico.csv", "a", newline="") as f:
             writer = csv.writer(f)
             writer.writerow([geracao, populacao[0].genes, round(populacao[0].fitness, 3), round(media_fit, 3)])
 
@@ -328,19 +370,10 @@ def main():
                 nova_pop.append(filho2)
         populacao = nova_pop
 
-    print("Finalizado! Melhor indivíduo geral:", melhores[-1].genes, "Fitness:", melhores[-1].fitness)
+    print("Finalizado! Melhor indivíduo geral - Fitness:", melhores[-1].fitness)
     salvar_melhor_individuo(melhores[-1])
     exibe_grafico(log_fits, medias)
     print("Melhor indivíduo salvo em 'melhor_individuo.json'.")
 
 if __name__ == "__main__":
     main()
-
-    # Para replay interativo:
-    if input("Deseja visualizar o melhor indivíduo final? (s/n) ").lower() == "s":
-        melhor = carregar_melhor_individuo()
-        pygame.init()
-        pygame.font.init()   # <-- ADICIONE ESTA LINHA
-        nave_img = carrega_imagem("media/tank.png", (80, 60))
-        inimigo_img = carrega_imagem("media/inimigo.png", (60, 40))
-        avaliar_individuo(melhor, mostrar_tela=True)
