@@ -14,8 +14,8 @@ INIMIGO_PARADO = True
 INIMIGO_INICIADO_ALEATORIO = True  
 
 # =============== PARÂMETROS DO ALGORITMO GENÉTICO ===============
-NUM_INDIVIDUOS = 90           # Indivíduos por geração
-NUM_GERACOES = 180            # Gerações
+NUM_INDIVIDUOS = 80           # Indivíduos por geração
+NUM_GERACOES = 100            # Gerações
 NUM_JOGADAS = 700             # Jogadas por indivíduo
 ELITISMO = True               # Manter melhor indivíduo na próxima geração
 N_MELHOR = 1                 # Quantos melhores mantém (elitismo)
@@ -78,7 +78,7 @@ class Individuo:
 
 def gerar_populacao_inicial():
     populacao = []
-    individuos_por_tipo = 10
+    individuos_por_tipo = 8
     tamanhos_blocos = [30,90,150]  # blocos que você quer
 
     for tamanho_bloco in tamanhos_blocos:

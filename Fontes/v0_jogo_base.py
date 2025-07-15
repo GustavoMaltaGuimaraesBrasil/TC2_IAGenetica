@@ -28,8 +28,8 @@ if MODO_JOGADOR == "manual":
 QUANTIDADE_INIMIGOS = 5  # Quantidade de inimigos por rodada
 
 # Carregamento de imagens
-nave_img = pygame.transform.scale(pygame.image.load("media/tank.png"), (80, 60))
-inimigo_img = pygame.transform.scale(pygame.image.load("media/inimigo.png"), (60, 40))
+nave_img = pygame.transform.scale(pygame.image.load("Fontes/media/tank.png"), (80, 60))
+inimigo_img = pygame.transform.scale(pygame.image.load("Fontes/media/inimigo.png"), (60, 40))
 
 # Histórico para gráfico
 historico_partidas = []
