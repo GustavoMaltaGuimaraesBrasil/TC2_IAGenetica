@@ -14,15 +14,15 @@ INIMIGO_PARADO = True
 INIMIGO_INICIADO_ALEATORIO = True  
 
 # =============== PARÂMETROS DO ALGORITMO GENÉTICO ===============
-NUM_INDIVIDUOS = 80           # Indivíduos por geração
-NUM_GERACOES = 100            # Gerações
-NUM_JOGADAS = 700             # Jogadas por indivíduo
+NUM_INDIVIDUOS = 60           # Indivíduos por geração
+NUM_GERACOES = 30            # Gerações
+NUM_JOGADAS = 600             # Jogadas por indivíduo
 ELITISMO = True               # Manter melhor indivíduo na próxima geração
 N_MELHOR = 1                 # Quantos melhores mantém (elitismo)
 PONTO_CORTE = 300             # Genes do pai1 no crossover (restante do pai2)
-PROB_MUTACAO = 0.6            # Prob. de mutação por indivíduo
-N_GENES_MUTACAO = (50,400)     # Quantidade de genes mutados (min, max)
-GERACOES_VISUALIZACAO = 10   # A cada quantas gerações exibir visualmente o melhor
+PROB_MUTACAO = 0.5            # Prob. de mutação por indivíduo
+N_GENES_MUTACAO = (40,80)     # Quantidade de genes mutados (min, max)
+GERACOES_VISUALIZACAO = 3   # A cada quantas gerações exibir visualmente o melhor
 QUANTIDADE_INIMIGOS = 7       # Quantidade de inimigos por rodada
 
 
@@ -78,7 +78,7 @@ class Individuo:
 
 def gerar_populacao_inicial():
     populacao = []
-    individuos_por_tipo = 8
+    individuos_por_tipo = 4
     tamanhos_blocos = [30,90,150]  # blocos que você quer
 
     for tamanho_bloco in tamanhos_blocos:
@@ -183,9 +183,9 @@ def selecao_ranking(populacao):
 
 
 def calcular_fitness(acertos, jogada_acertos, jogadas_usadas, genes):
-    PESO_INIMIGOS_ABATIDOS = 0.6  # Peso dos inimigos abatidos
-    PESO_ORDEM_ACERTOS = 0.3 # Peso da ordem dos acertos
-    BONUS_FINAL = 0.5             # Bônus para abate total rápido
+    PESO_INIMIGOS_ABATIDOS = 0.4  # Peso dos inimigos abatidos
+    PESO_ORDEM_ACERTOS = 0.2 # Peso da ordem dos acertos
+    BONUS_FINAL = 0.2        # Bônus para abate total rápido
 
 
     fit1 = (acertos / QUANTIDADE_INIMIGOS) * PESO_INIMIGOS_ABATIDOS

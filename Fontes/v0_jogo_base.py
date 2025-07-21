@@ -19,13 +19,13 @@ FPS = 1000
 TOTAL_PARTIDAS = 160
 
 # Modos de comportamento
-COMPORTAMENTO_INIMIGOS = "desviando"  # "aleatorio", "linear" ou "desviando"
+COMPORTAMENTO_INIMIGOS = "aleatorio"  # "aleatorio", "linear" ou "desviando"
 MODO_JOGADOR = "manual"  # "linear", "aleatorio" ou "manual"
 
 if MODO_JOGADOR == "manual":
     FPS = 100
 
-QUANTIDADE_INIMIGOS = 5  # Quantidade de inimigos por rodada
+QUANTIDADE_INIMIGOS = 4  # Quantidade de inimigos por rodada
 
 # Carregamento de imagens
 nave_img = pygame.transform.scale(pygame.image.load("Fontes/media/tank.png"), (80, 60))
