@@ -25,6 +25,10 @@ O agente evolui suas estratégias ao longo das gerações, explorando soluções
 
 O projeto demonstra a eficácia dos algoritmos evolutivos para problemas de busca e otimização onde o espaço de soluções é enorme.
 
+## Código Fonte
+
+https://github.com/GustavoMaltaGuimaraesBrasil/TC2_IAGenetica
+
 ## Simulador (Jogo base)
 
 Acesse /Fontes/v0_jogo_base.py
